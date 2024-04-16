@@ -1,0 +1,78 @@
+import java.util.Scanner;
+
+public class b {
+    static class Cell {
+        private final String value;
+        private boolean visited;
+
+        public Cell(String value) {
+            this.value = value;
+            this.visited = false;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public boolean isVisited() {
+            return visited;
+        }
+
+        public void setVisited(boolean visited) {
+            this.visited = visited;
+        }
+    }
+
+    public static boolean search(Cell[][] board, String word, int row, int col, int index) {
+        if (index == word.length()) {
+            return true;
+        }
+
+        if (row < 0 || row >= board.length || col < 0 || col >= board[0].length
+                || board[row][col].isVisited() || !board[row][col].getValue().equals(word.substring(index, index + 1))) {
+            return false;
+        }
+
+        board[row][col].setVisited(true);
+
+        boolean found = search(board, word, row - 1, col, index + 1)
+                || search(board, word, row + 1, col, index + 1)
+                || search(board, word, row, col - 1, index + 1)
+                || search(board, word, row, col + 1, index + 1);
+
+        board[row][col].setVisited(false);
+
+        return found;
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        int rows = scanner.nextInt();
+        int cols = scanner.nextInt();
+        scanner.nextLine(); 
+        Cell[][] board = new Cell[rows][cols];
+
+        for (int i = 0; i < rows; i++) {
+            String[] rowValues = scanner.nextLine().split(" ");
+            for (int j = 0; j < cols; j++) {
+                board[i][j] = new Cell(rowValues[j]);
+            }
+        }
+
+        String word = scanner.nextLine();
+
+        boolean found = false;
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[0].length; j++) {
+                if (search(board, word, i, j, 0)) {
+                    found = true;
+                    break;
+                }
+            }
+            if(found)break;
+        }
+        System.out.println(found ? "true" : "false");
+
+        scanner.close();
+    }
+}
